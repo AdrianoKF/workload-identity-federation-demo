@@ -1,11 +1,15 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Using Workload Identity Federation in GitHub Actions
 
-To start the slide show:
+You can find the latest version of the slide deck here:
+
+https://workload-identity-federation-demo-website.storage.googleapis.com/index.html
+
+## Running Locally
+
+To start the slide show in dev mode:
 
 - `npm install`
 - `npm run dev`
 - visit http://localhost:3030
 
-Edit the [slides.md](./slides.md) to see the changes.
-
-Learn more about Slidev on [documentations](https://sli.dev/).
+Edit and save [slides.md](./slides.md) to see the changes.
