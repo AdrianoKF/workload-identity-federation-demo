@@ -1,0 +1,50 @@
+name: Deploy web page
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Build and test app
+        run: |
+          npm ci
+          npm run build
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ${{ github.workspace }}/dist/
+
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: production
+    environment: production
+    needs: build
+    # only deploy on 'main'
+    if: ${{github.ref == 'refs/heads/main'}}
+    permissions:
+        contents: "read" # required for actions/checkout
+        id-token: "write" # required for requesting the JWT to pass to Google Cloud
+    steps:
+      - name: Restore build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER_NAME }}
+      - uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          skip_install: true
+      - name: Deploy to GCS
+        run: gsutil -h'Cache-Control:no-cache,max-age=0' -m rsync -dr dist gs://${{ vars.WEBSITE_BUCKET }}/
