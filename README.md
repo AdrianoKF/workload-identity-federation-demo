@@ -1,6 +1,7 @@
 [![Cover Slide](cover-slide.png)](https://workload-identity-federation-demo-website.storage.googleapis.com/index.html)
 
-[![GitHub branch check runs](https://img.shields.io/github/check-runs/AdrianoKF/workload-identity-federation-demo/main?label=CI)](https://github.com/AdrianoKF/workload-identity-federation-demo/actions) [![Current slide deck](https://img.shields.io/badge/slides-current-blue)](https://workload-identity-federation-demo-website.storage.googleapis.com/index.html)
+[![Current slide deck](https://img.shields.io/badge/slides-current-blue)](https://workload-identity-federation-demo-website.storage.googleapis.com/index.html) [![GitHub branch check runs](https://img.shields.io/github/check-runs/AdrianoKF/workload-identity-federation-demo/main?label=CI)](https://github.com/AdrianoKF/workload-identity-federation-demo/actions) [![GitHub deployments](https://img.shields.io/github/deployments/AdrianoKF/workload-identity-federation-demo/production?label=deployment)
+](https://github.com/AdrianoKF/workload-identity-federation-demo/deployments/production)
 
 You can find the latest version of the slide deck here:
 
