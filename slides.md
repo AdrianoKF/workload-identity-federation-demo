@@ -12,7 +12,7 @@ class: text-center
 hideInToc: true
 ---
 
-# <logos-github-icon /> x <logos-google-cloud /> = <twemoji-red-heart />
+# <mdi-github /> x <logos-google-cloud /> = <twemoji-red-heart />
 
 ## Using Workload Identity Federation in GitHub Actions
 
@@ -278,6 +278,8 @@ class: "empty-bg"
 <img fixed class="-z-10" inset-0 opacity-50 src="https://unsplash.com/photos/cFbNlpRZKi0/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTJ8fHdvb2RzfGVufDB8fHx8MTcxOTUwOTM4NXww&force=true&w=1920">
 
 # Demo
+
+[<mdi-github /> AdrianoKF/workload-identity-federation-demo](https://github.com/AdrianoKF/workload-identity-federation-demo)
 
 ---
 layout: full
