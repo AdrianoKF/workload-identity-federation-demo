@@ -149,6 +149,8 @@ layout: section
 
 ---
 layout: center
+title: Example workflow
+level: 2
 ---
 
 ````md magic-move
@@ -186,6 +188,52 @@ steps:
     run: gsutil rsync -dr dist gs://${{ vars.WEBSITE_BUCKET }}/
 ```
 ````
+
+---
+layout: center
+---
+
+## Breaking down `workload_identity_provider`
+
+<p>&nbsp;</p>
+
+<code text-base :class="$clicks === 0 ? 'text-white' : 'text-slate-500'">
+  <span :class="{ 'text-white': $clicks === 1 }">projects/790484731908</span>/<span :class="{ 'text-white': $clicks === 2 }">locations/global</span>/<span :class="{ 'text-white': $clicks === 3 }">workloadIdentityPools/github</span>/<span :class="{ 'text-white': $clicks === 4 }">providers/demo-repo</span>
+</code>
+
+<p relative>
+<v-switch>
+<template #1>
+<div absolute left-0>
+  <p font-semibold>Project number (not ID!)</p>
+  <p>Visible in Cloud Console on the project Welcome page and under <mdi-dots-vertical /> <mdi-arrow-right-thin /> <em>Project Settings</em></p>
+</div>
+</template>
+<template #2><div font-semibold absolute left-53>Location (always <code>global</code>)</div></template>
+<template #3><div font-semibold absolute left-94>Identity pool ID</div></template>
+<template #4><div font-semibold absolute left-158>Identity pool provider ID</div></template>
+<template #5>
+  <br>
+  We can get this string in a single GCloud CLI call:
+
+  <div absolute class="left-1/2 -translate-x-1/2">
+```shell
+gcloud iam workload-identity-pools providers describe "$IDENTITY_PROVIDER_NAME" \
+        --project="${PROJECT_ID}" \
+        --location="global" \
+        --workload-identity-pool="$IDENTITY_POOL_NAME" \
+        --format="value(name)"
+```
+  </div>
+</template>
+</v-switch>
+</p>
+
+<style scoped>
+code span {
+  transition: color .25s linear;
+}
+</style>
 
 ---
 layout: section
