@@ -22,7 +22,9 @@ hideInToc: true
 
 # Agenda
 
-<Toc />
+<Transform :scale=".9">
+  <Toc />
+</Transform>
 
 ---
 
