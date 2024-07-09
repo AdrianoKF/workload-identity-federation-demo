@@ -18,13 +18,12 @@ hideInToc: true
 
 ---
 hideInToc: true
+layout: full
 ---
 
 # Agenda
 
-<Transform :scale=".8">
-  <Toc />
-</Transform>
+<Toc columns="2" maxDepth="2" />
 
 ---
 
@@ -375,11 +374,11 @@ layout: center
   }
 </style>
 
-<<< @/snippets/create-gcp-workload-identity-provider.sh shell {3-6|8-10|12-22|16|17|18-22}
+<<< @/snippets/create-gcp-workload-identity-provider.sh shell {|3-6|8-10|12-22|16|17|18-22}
 
-<span v-click="3" class="annotation" absolute right-10 top-337px>Tokens are issued by GitHub</span>
-<span v-click="4" class="annotation" absolute right-10 top-359px>Accept single organization only</span>
-<span v-click="5" class="annotation" absolute right-10 top-410px>Map [JWT claims](https://token.actions.githubusercontent.com/.well-known/openid-configuration) to assertions</span>
+<span v-click="4" class="annotation" absolute right-10 top-337px>Tokens are issued by GitHub</span>
+<span v-click="5" class="annotation" absolute right-10 top-359px>Accept single organization only</span>
+<span v-click="6" class="annotation" absolute right-10 top-410px>Map [JWT claims](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token) to assertions</span>
 
 ---
 title: Using Terraform
@@ -405,12 +404,16 @@ module "gh_oidc" {
 `gh_oidc` [module](https://github.com/terraform-google-modules/terraform-google-github-actions-runners/tree/master/modules/gh-oidc)
 
 ---
+level: 2
+---
 
-## Setting IAM Permissions
+# Setting IAM Permissions
 
 How do I manage the permissions of a federated account?
 
-Simple enough - they are referenced through `principalSet://` [principal identifiers](https://cloud.google.com/iam/docs/principal-identifiers):
+Permissions for federated identities are managed the same way as for "regular" Google Cloud identities: through **IAM** (both on the project- or resource-level).
+
+You can reference them through `principal://` and `principalSet://` [principal identifiers](https://cloud.google.com/iam/docs/principal-identifiers):
 
 ````md magic-move
 ```shell
@@ -440,7 +443,7 @@ gcloud storage buckets add-iam-policy-binding \
 | All identities in a group                      | `principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/group/GROUP_ID`                           |
 | All identities with a specific attribute value | `principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/attribute.ATTRIBUTE_NAME/ATTRIBUTE_VALUE` |
 
-The [GitHub page on OIDC Connect](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#example-subject-claims) has examples on how to build claims that match specific events and conditions in GitHub Actions.
+The GitHub documentation page on [OIDC Connect](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#example-subject-claims) shows examples on how to build claim patterns that match specific events and conditions in GitHub Actions.
 
 ---
 layout: section
