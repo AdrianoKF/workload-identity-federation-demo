@@ -22,7 +22,7 @@ hideInToc: true
 
 # Agenda
 
-<Transform :scale=".9">
+<Transform :scale=".8">
   <Toc />
 </Transform>
 
@@ -30,25 +30,28 @@ hideInToc: true
 
 <style scoped>
   li {
-    line-height: 2.2em !important;
+    line-height: 2.5em !important;
+    list-style-type: none;
+    margin: 0;    
+  }
+
+  li .slidev-icon:first-child {
+    margin-right: 12px;
   }
 </style>
 
 # Setting the Scene
 
-Can you see yourself doing any of this in GitHub Actions CI pipeline?
+Can you see yourself doing any of this in a CI pipeline?
 
-<v-clicks>
-
-- **Deploy applications** to Cloud Functions, Cloud Run, Kubernetes Engine, App Engine, ...
-- **Push container images** to Container Registry (`gcr.io`) or Artifact Registry (`pkg.dev`)
-- Deploy **Infrastructure as Code** (Terraform, Pulumi, ...)
-- Use cloud infrastructure for **integration testing**
-- **Access data assets** living in Cloud Storage, BigQuery, Cloud SQL, ...
-- **Access secrets** in Secret Manager
+- <mdi-ship-wheel /> **Deploy applications** to Cloud Functions, Cloud Run, Kubernetes Engine, App Engine, ...
+- <mdi-docker /> **Push container images** to Container Registry (`gcr.io`) or Artifact Registry (`pkg.dev`)
+- <mdi-crane /> Deploy **Infrastructure as Code** (Terraform, Pulumi, ...)
+- <mdi-cloud /> Use ephemeral cloud infrastructure during **integration testing**
+- <mdi-database /> **Access data assets** living in Cloud Storage, BigQuery, Cloud SQL, ...
+- <mdi-security /> **Access secrets** in Secret Manager
+- <mdi-language-python /> **Publish Python packages** to PyPI (<mdi-arrow-right-thin /> [Trusted Publishing](https://docs.pypi.org/trusted-publishers/))
 - ...
-
-</v-clicks>
 
 ---
 title: How to not integrate GitHub and GCP
@@ -95,7 +98,18 @@ Also: IT forbids service account key creation in new projects through an organiz
 layout: section
 ---
 
+The solution?
+
+<v-clicks>
+
 # Workload Identity Federation
+
+<p font-thin>
+<mdi-information-box /> This talk focuses on identity federation between GitHub and other Google Cloud.<br/>
+However, you can use the same principles to perform cross-cloud authentication.
+</p>
+
+</v-clicks>
 
 ---
 
@@ -107,6 +121,112 @@ Allow external services to securely access Google Cloud resources through OIDC/S
 
 <p absolute bottom-5>
 <a href="https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions" target="_blank">Source</a>
+</p>
+
+<!--
+- 1️⃣. OIDC JWT token exchange (GitHub ID token for short-lived Google Cloud access token)
+- 2️⃣. Access control and mapping of GitHub token claims
+- 3️⃣. GitHub Actions Runner can act as a service account (or IAM principal)
+-->
+
+---
+layout: two-cols-header
+level: 2
+---
+
+# OpenID Connect (OIDC) in a Nutshell
+
+(courtesy of Claude)
+
+::left::
+
+<p>
+
+**What is OIDC?**
+
+- An identity layer built on top of OAuth 2.0 (an authorization framework)
+- Enables clients to verify user identity
+- Obtains basic profile information
+
+</p>
+
+<p>
+
+**Key Components**
+
+1. **ID Token**: JWT containing user info
+2. **`UserInfo` Endpoint**: Additional user details
+3. **Standard Claims**: Predefined user attributes
+
+</p>
+
+::right::
+
+<p>
+
+**Benefits**
+
+- Single Sign-On (SSO)
+- <span v-mark.underline.red>Improved security</span>
+- <span v-mark.underline.red.at="1">Standardized protocol</span>
+- Widely adopted
+
+</p>
+
+---
+level: 3
+---
+
+# What's in a [GitHub OIDC token](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token)?
+
+<Transform scale=".6">
+
+```json {|1-6,8,31-34|9-18|19-30}{at: 1}
+{
+  "typ": "JWT",
+  "alg": "RS256",
+  "x5t": "example-thumbprint",
+  "kid": "example-key-id"
+}
+{
+  "jti": "example-id",
+  "sub": "repo:octo-org/octo-repo:environment:prod",
+  "environment": "prod",
+  "aud": "https://github.com/octo-org",
+  "ref": "refs/heads/main",
+  "sha": "example-sha",
+  "repository": "octo-org/octo-repo",
+  "repository_owner": "octo-org",
+  "repository_visibility": "private",
+  "repository_id": "74",
+  "repository_owner_id": "65",
+  "run_id": "example-run-id",
+  "run_number": "10",
+  "run_attempt": "2",
+  "runner_environment": "github-hosted",
+  "actor_id": "12",
+  "actor": "octocat",
+  "workflow": "example-workflow",
+  "head_ref": "",
+  "base_ref": "",
+  "event_name": "workflow_dispatch",
+  "ref_type": "branch",
+  "job_workflow_ref": "octo-org/octo-automation/.github/workflows/oidc.yml@refs/heads/main",
+  "iss": "https://token.actions.githubusercontent.com",
+  "nbf": 1632492967,
+  "exp": 1632493867,
+  "iat": 1632493567
+}
+```
+
+</Transform>
+
+<p absolute bottom-5>
+<v-switch>
+<template #1>Standard JWT structure & OIDC claims</template>
+<template #2>Repository and environment information</template>
+<template #3>Actions workflow information & runner environment</template>
+</v-switch>
 </p>
 
 ---
@@ -166,7 +286,7 @@ steps:
     run: gsutil rsync -dr dist gs://${{ vars.WEBSITE_BUCKET }}/
 ```
 
-```yaml {3,6-14}
+```yaml {3,9-17}
 permissions:
   contents: "read" # required for actions/checkout
   id-token: "write" # required for requesting the JWT to pass to Google Cloud
@@ -320,6 +440,8 @@ gcloud storage buckets add-iam-policy-binding \
 | All identities in a group                      | `principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/group/GROUP_ID`                           |
 | All identities with a specific attribute value | `principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/attribute.ATTRIBUTE_NAME/ATTRIBUTE_VALUE` |
 
+The [GitHub page on OIDC Connect](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#example-subject-claims) has examples on how to build claims that match specific events and conditions in GitHub Actions.
+
 ---
 layout: section
 class: "empty-bg"
@@ -332,12 +454,32 @@ class: "empty-bg"
 [<mdi-github /> AdrianoKF/workload-identity-federation-demo](https://github.com/AdrianoKF/workload-identity-federation-demo)
 
 ---
-layout: full
+
+# What about Azure & AWS?
+
+Azure and AWS both offer similar mechanisms to Workload Identity Federation.
+
+## AWS
+
+- [GitHub: Configuring OpenID Connect in Amazon Web Services](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
+- [AWS: Create an OpenID Connect (OIDC) identity provider in IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html)
+
+## Azure
+
+- [GitHub: Configuring OpenID Connect in Azure](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure)
+- [Azure: Workload identity federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation)
+
+---
+layout: two-cols-header
 ---
 
 <style scoped>
   a {
-    font-size: 65% !important;
+    font-size: 12px !important;
+  }
+
+  a code {
+    font-size: 12px !important;
   }
 
   li {
@@ -347,23 +489,38 @@ layout: full
 
 # Resources
 
+::right::
+
 ## Google Cloud
 
-- https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions
-- https://cloud.google.com/iam/docs/workload-identity-federation
-- https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines
+- [Enabling keyless authentication from GitHub Actions](https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions)
+- [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
+- [Configure Workload Identity Federation with deployment pipelines](https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines)
+
+## Terraform
+
+- [`gh_oidc` module](https://registry.terraform.io/modules/terraform-google-modules/github-actions-runners/google/latest/submodules/gh-oidc)
+
+## PyPI <span text-sm text-gray-500>(not technically Workload Identity Federation)</span>
+
+- [Trusted Publishers](https://docs.pypi.org/trusted-publishers/)
+- [Publishing with a Trusted Publisher](https://docs.pypi.org/trusted-publishers/using-a-publisher/)
+
+::left::
 
 ## GitHub
 
 Marketplace actions
 
-- https://github.com/google-github-actions/auth
-- https://github.com/google-github-actions/setup-gcloud/
+- [`google-github-actions/auth`](https://github.com/google-github-actions/auth)
+- [`google-github-actions/setup-gcloud`](https://github.com/google-github-actions/setup-gcloud/)
+- [`github/actions-oidc-debugger`](https://github.com/github/actions-oidc-debugger)
 
 Documentation
 
-- https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
-- https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-google-cloud-platform
+- [About security hardening with OpenID Connect](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect)
+  - [OIDC token structure](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token)
+- [Configuring OpenID Connect in Google Cloud Platform](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-google-cloud-platform)
 
 ---
 layout: end

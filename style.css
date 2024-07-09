@@ -6,3 +6,9 @@
 .empty-bg {
   background: none !important;
 }
+
+/* Fix rendering of link decorations with code blocks */
+a code {
+  position: relative;
+  z-index: -1;
+}
