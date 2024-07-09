@@ -111,8 +111,10 @@ However, you can use the same principles to perform cross-cloud authentication.
 </v-clicks>
 
 ---
+level: 2
+---
 
-## Overview
+# Overview
 
 Allow external services to securely access Google Cloud resources through OIDC/SAML tokens.
 
@@ -230,9 +232,12 @@ level: 3
 
 ---
 layout: two-cols-header
+level: 2
 ---
 
-## Building Blocks
+# Building Blocks
+
+Google Cloud resources and concepts for Workload Identity Federation
 
 ::left::
 
@@ -380,6 +385,13 @@ layout: center
 <span v-click="5" class="annotation" absolute right-10 top-359px>Accept single organization only</span>
 <span v-click="6" class="annotation" absolute right-10 top-410px>Map [JWT claims](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token) to assertions</span>
 
+<p absolute bottom-5>
+<v-switch at="1">
+<template #2>Create Identity Pool</template>
+<template #3-7>Create Identity Pool Provider</template>
+</v-switch>
+</p>
+
 ---
 title: Using Terraform
 level: 2
@@ -434,8 +446,12 @@ gcloud storage buckets add-iam-policy-binding \
 ````
 
 ---
+level: 2
+---
 
-## Identity Types
+# Identity Types
+
+Referencing federated identities based on their attributes
 
 | Identities                                     | Identifier Format                                                                                                                                   |
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -460,17 +476,24 @@ class: "empty-bg"
 
 # What about Azure & AWS?
 
+Google Cloud can't be the only one, right?
+
 Azure and AWS both offer similar mechanisms to Workload Identity Federation.
 
-## AWS
+**AWS**
 
 - [GitHub: Configuring OpenID Connect in Amazon Web Services](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
 - [AWS: Create an OpenID Connect (OIDC) identity provider in IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html)
 
-## Azure
+**Azure**
 
 - [GitHub: Configuring OpenID Connect in Azure](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure)
 - [Azure: Workload identity federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation)
+
+<br/>
+
+You are also not limited to just GitHub Actions:
+Another big use case is cloud-based infrastructure management (e.g. Terraform Cloud / HCP Terraform, [Pulumi Cloud](https://www.pulumi.com/docs/pulumi-cloud/oidc/provider/)).
 
 ---
 layout: two-cols-header
@@ -499,6 +522,7 @@ layout: two-cols-header
 - [Enabling keyless authentication from GitHub Actions](https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions)
 - [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation)
 - [Configure Workload Identity Federation with deployment pipelines](https://cloud.google.com/iam/docs/workload-identity-federation-with-deployment-pipelines)
+- [Best practices for using Workload Identity Federation](https://cloud.google.com/iam/docs/best-practices-for-using-workload-identity-federation#use-immutable-attributes)
 
 ## Terraform
 
@@ -529,4 +553,4 @@ Documentation
 layout: end
 ---
 
-Questions & comments?
+`questions || comments || feedback`
