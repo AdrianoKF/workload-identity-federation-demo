@@ -493,7 +493,7 @@ Azure and AWS both offer similar mechanisms to Workload Identity Federation.
 <br/>
 
 You are also not limited to just GitHub Actions:
-Another big use case is cloud-based infrastructure management (e.g. Terraform Cloud / HCP Terraform, [Pulumi Cloud](https://www.pulumi.com/docs/pulumi-cloud/oidc/provider/)).
+Another big use case is cloud-based infrastructure management (e.g. [Terraform Cloud / HCP Terraform](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/gcp-configuration), [Pulumi Cloud](https://www.pulumi.com/docs/pulumi-cloud/oidc/provider/)).
 
 ---
 layout: two-cols-header
