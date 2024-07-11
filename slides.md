@@ -178,9 +178,14 @@ level: 2
 level: 3
 ---
 
-# What's in a [GitHub OIDC token](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token)?
+<style scoped>
+  pre {
+    font-size: 40% !important;
+    line-height: 1.2em !important;
+  }
+</style>
 
-<Transform scale=".6">
+# What's in a [GitHub OIDC token](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/bout-security-hardening-with-openid-connect#understanding-the-oidc-token)?
 
 ```json {|1-6,8,31-34|9-18|19-30}{at: 1}
 {
@@ -220,9 +225,7 @@ level: 3
 }
 ```
 
-</Transform>
-
-<p absolute bottom-5>
+<p>
 <v-switch>
 <template #1>Standard JWT structure & OIDC claims</template>
 <template #2>Repository and environment information</template>
@@ -448,6 +451,18 @@ gcloud storage buckets add-iam-policy-binding \
 ---
 level: 2
 ---
+
+<style scoped>
+  table {
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    hyphenate-character: "\21a9";
+  }
+
+  table code {
+    font-size: 75%;
+  }
+</style>
 
 # Identity Types
 
